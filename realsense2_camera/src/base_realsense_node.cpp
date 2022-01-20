@@ -196,6 +196,7 @@ void BaseRealSenseNode::toggleSensors(bool enabled)
         if (sensor.is<rs2::depth_sensor>())
         {
             _depth_scale_meters = sensor.as<rs2::depth_sensor>().get_depth_scale();
+            ROS_WARN_STREAM("UPDATED _depth_scale_meters: " << _depth_scale_meters);
         }
     }
   }
@@ -510,6 +511,7 @@ void BaseRealSenseNode::registerDynamicOption(ros::NodeHandle& nh, rs2::options 
                     {
                         if (ROS_DEPTH_SCALE >= op_range.min && ROS_DEPTH_SCALE <= op_range.max)
                         {
+                            ROS_WARN_STREAM("sensor.set_option(option, ROS_DEPTH_SCALE)");
                             sensor.set_option(option, ROS_DEPTH_SCALE);
                             op_range.min = ROS_DEPTH_SCALE;
                             op_range.max = ROS_DEPTH_SCALE;
@@ -1277,7 +1279,7 @@ void BaseRealSenseNode::setupFilters()
 cv::Mat& BaseRealSenseNode::fix_depth_scale(const cv::Mat& from_image, cv::Mat& to_image)
 {
     static const float meter_to_mm = 0.001f;
-    if (fabs(_depth_scale_meters - meter_to_mm) < 1e-6)
+    if (true || fabs(_depth_scale_meters - meter_to_mm) < 1e-6)
     {
         to_image = from_image;
         return to_image;
